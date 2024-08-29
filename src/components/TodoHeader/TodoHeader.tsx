@@ -7,6 +7,7 @@ import { ErrorMessage } from '../../types/ErrorMessage';
 type Props = {
   todos: Todo[];
   isDataInProceeding: boolean;
+  isTodoTitleEditing: boolean;
   toggleAllTodoStatuses: () => void;
   handleSetDataLoadingStatus: (status: boolean) => void;
   addTempTodo: (tempTodo: Todo | null) => void;
@@ -17,6 +18,7 @@ type Props = {
 export const TodoHeader: React.FC<Props> = ({
   todos,
   isDataInProceeding,
+  isTodoTitleEditing,
   toggleAllTodoStatuses,
   handleSetDataLoadingStatus,
   addTempTodo,
@@ -76,14 +78,13 @@ export const TodoHeader: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (focusOnInput.current) {
-      focusOnInput.current.focus();
+    if (!isTodoTitleEditing) {
+      focusOnInput.current?.focus();
     }
   });
 
   return (
     <header className="todoapp__header">
-      {/* this button should have `active` class only if all todos are completed */}
       {!isTodosEmpty && (
         <button
           type="button"
@@ -92,7 +93,11 @@ export const TodoHeader: React.FC<Props> = ({
               todos.every(todo => todo.completed === true) && !isTodosEmpty,
           })}
           data-cy="ToggleAllButton"
-          onClick={toggleAllTodoStatuses}
+          onClick={() => {
+            if (!isTodoTitleEditing) {
+              toggleAllTodoStatuses();
+            }
+          }}
         />
       )}
 

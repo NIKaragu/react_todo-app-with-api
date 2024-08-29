@@ -33,6 +33,9 @@ export const App: React.FC = () => {
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [isDataInProceeding, setIsDataInProceeding] = useState(false);
   const [selectedTodoIds, setSelectedTodoIds] = useState<number[]>([]);
+  const [isTodoTitleEditing, setIsTodoTitleEditing] = useState(false);
+  const [isSaveSuccessful, setIsSaveSuccessful] = useState<boolean>(true);
+
   // #endregion
 
   const filteredTodos = filterTodos(todos, selectedOption);
@@ -70,6 +73,13 @@ export const App: React.FC = () => {
     }, 3000);
   };
 
+  const handleDoubleClickOnTodoField = (todoId: number) => {
+    if (!isTodoTitleEditing && isSaveSuccessful) {
+      setIsTodoTitleEditing(true);
+      setSelectedTodoIds([todoId]);
+    }
+  };
+
   // #region TodoDeletion
   const handleDeletionTodo = async (todoId: number) => {
     setIsDataInProceeding(true);
@@ -78,11 +88,12 @@ export const App: React.FC = () => {
     try {
       await deleteTodo(todoId);
       setTodos(currentTodos => currentTodos.filter(todo => todo.id !== todoId));
-    } catch (error) {
+      setSelectedTodoIds([]);
+    } catch {
       handleError(ErrorMessage.OnDeletionTodo);
+      throw Error(ErrorMessage.OnDeletionTodo);
     } finally {
       setIsDataInProceeding(false);
-      setSelectedTodoIds([]);
     }
   };
 
@@ -116,11 +127,13 @@ export const App: React.FC = () => {
 
         return newTodos;
       });
+      setSelectedTodoIds([]);
     } catch {
-      setErrorMessage(ErrorMessage.OnUpdatingTodo);
+      handleError(ErrorMessage.OnUpdatingTodo);
+      throw Error(ErrorMessage.OnUpdatingTodo);
     } finally {
       setIsDataInProceeding(false);
-      setSelectedTodoIds([]);
+      // setSelectedTodoIds([]);
     }
   };
 
@@ -154,10 +167,6 @@ export const App: React.FC = () => {
   // #endregion
 
   useEffect(() => {
-    console.log('isDataInProceeding: ', isDataInProceeding); // for testing
-  }, [isDataInProceeding]);
-
-  useEffect(() => {
     getTodos()
       .then(setTodos)
       .catch(() => {
@@ -176,9 +185,10 @@ export const App: React.FC = () => {
       <div className="todoapp__content">
         <TodoHeader
           todos={todos}
+          isTodoTitleEditing={isTodoTitleEditing}
+          isDataInProceeding={isDataInProceeding}
           toggleAllTodoStatuses={handleToggleAllTodosStatuses}
           handleSetDataLoadingStatus={handleSetDataLoadingStatus}
-          isDataInProceeding={isDataInProceeding}
           addTempTodo={handleSetTempTodo}
           updateTodoList={handleNewTodo}
           onError={handleError}
@@ -186,14 +196,19 @@ export const App: React.FC = () => {
 
         <TodoMain
           todos={filteredTodos}
-          onDelete={handleDeletionTodo}
+          isTodoTitleEditing={isTodoTitleEditing}
           selectedTodoIds={selectedTodoIds}
           tempTodo={tempTodo}
           isDataInProceeding={isDataInProceeding}
+          isSaveSuccessful={isSaveSuccessful}
+          setIsSaveSuccessful={setIsSaveSuccessful}
+          onTodoTitleEdit={handleDoubleClickOnTodoField}
+          changeEditingStatus={setIsTodoTitleEditing}
+          onUpdate={handleChangeTodo}
+          onDelete={handleDeletionTodo}
           toggleStatus={handleToggleTodoStatus}
         />
 
-        {/* Hide the footer if there are no todos */}
         {todos.length > 0 && (
           <TodoFooter
             todos={todos}
@@ -204,8 +219,6 @@ export const App: React.FC = () => {
         )}
       </div>
 
-      {/* DON'T use conditional rendering to hide the notification */}
-      {/* Add the 'hidden' class to hide the message smoothly */}
       <ErrorNotification
         errorMessage={errorMessage}
         onClose={setErrorMessage}
