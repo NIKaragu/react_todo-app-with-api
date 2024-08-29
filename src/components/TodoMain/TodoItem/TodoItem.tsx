@@ -10,8 +10,6 @@ type Props = {
   isDataInProceeding: boolean;
   selectedTodoId?: number | null;
   isTodoTitleEditing: boolean;
-  isSaveSuccessful: boolean;
-  setIsSaveSuccessful: (status: boolean) => void;
   onTodoTitleEdit: (todoId: number) => void;
   changeEditingStatus: (editingStatus: boolean) => void;
   onUpdate: (todoToUpdate: Todo) => Promise<void>;
@@ -24,8 +22,6 @@ export const TodoItem: React.FC<Props> = ({
   isDataInProceeding,
   selectedTodoId,
   isTodoTitleEditing,
-  isSaveSuccessful,
-  setIsSaveSuccessful,
   onTodoTitleEdit,
   changeEditingStatus,
   onUpdate,
@@ -55,10 +51,8 @@ export const TodoItem: React.FC<Props> = ({
       try {
         await onDelete(todo.id);
         changeEditingStatus(false);
-        setIsSaveSuccessful(true);
       } catch {
         focusOnTitleEditing.current?.focus();
-        setIsSaveSuccessful(false);
         changeEditingStatus(true);
       }
 
@@ -74,10 +68,8 @@ export const TodoItem: React.FC<Props> = ({
         completed: todo.completed,
       });
       changeEditingStatus(false);
-      setIsSaveSuccessful(true);
       setTodoTitleWhileEdit(prev => prev.trim());
     } catch {
-      setIsSaveSuccessful(false);
       changeEditingStatus(true);
       focusOnTitleEditing.current?.focus();
     }
@@ -88,7 +80,6 @@ export const TodoItem: React.FC<Props> = ({
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
       changeEditingStatus(false);
-      setIsSaveSuccessful(true);
       setTodoTitleWhileEdit(todo.title.trim());
     }
   };
@@ -113,7 +104,7 @@ export const TodoItem: React.FC<Props> = ({
           className="todo__status"
           checked={todo.completed}
           onChange={() => {
-            if (!isTodoTitleEditing && isSaveSuccessful) {
+            if (!isTodoTitleEditing) {
               toggleStatus(todo.id);
             }
           }}
@@ -150,7 +141,7 @@ export const TodoItem: React.FC<Props> = ({
             className="todo__remove"
             data-cy="TodoDelete"
             onClick={() => {
-              if (!isTodoTitleEditing && isSaveSuccessful) {
+              if (!isTodoTitleEditing) {
                 onDelete(todo.id);
               }
             }}

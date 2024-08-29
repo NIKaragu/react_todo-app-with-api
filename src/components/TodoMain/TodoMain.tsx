@@ -10,8 +10,6 @@ type Props = {
   isDataInProceeding: boolean;
   selectedTodoIds: number[];
   isTodoTitleEditing: boolean;
-  isSaveSuccessful: boolean;
-  setIsSaveSuccessful: (status: boolean) => void;
   onTodoTitleEdit: (todoId: number) => void;
   changeEditingStatus: (editingStatus: boolean) => void;
   onUpdate: (todoToUpdate: Todo) => Promise<void>;
@@ -25,8 +23,6 @@ export const TodoMain: React.FC<Props> = ({
   isDataInProceeding,
   selectedTodoIds,
   isTodoTitleEditing,
-  isSaveSuccessful,
-  setIsSaveSuccessful,
   onTodoTitleEdit,
   changeEditingStatus,
   onUpdate,
@@ -43,8 +39,6 @@ export const TodoMain: React.FC<Props> = ({
               isDataInProceeding={isDataInProceeding}
               selectedTodoId={selectedTodoIds?.find(id => id === todo.id)}
               isTodoTitleEditing={isTodoTitleEditing}
-              isSaveSuccessful={isSaveSuccessful}
-              setIsSaveSuccessful={setIsSaveSuccessful}
               onTodoTitleEdit={onTodoTitleEdit}
               changeEditingStatus={changeEditingStatus}
               onUpdate={onUpdate}

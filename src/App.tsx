@@ -34,8 +34,6 @@ export const App: React.FC = () => {
   const [isDataInProceeding, setIsDataInProceeding] = useState(false);
   const [selectedTodoIds, setSelectedTodoIds] = useState<number[]>([]);
   const [isTodoTitleEditing, setIsTodoTitleEditing] = useState(false);
-  const [isSaveSuccessful, setIsSaveSuccessful] = useState<boolean>(true);
-
   // #endregion
 
   const filteredTodos = filterTodos(todos, selectedOption);
@@ -60,7 +58,6 @@ export const App: React.FC = () => {
 
   const handleFiltrationOption = (option: FilterOptions) => {
     setIsTodoTitleEditing(false);
-    setIsSaveSuccessful(true);
     setSelectedOption(option);
   };
 
@@ -76,7 +73,7 @@ export const App: React.FC = () => {
   };
 
   const handleDoubleClickOnTodoField = (todoId: number) => {
-    if (!isTodoTitleEditing && isSaveSuccessful) {
+    if (!isTodoTitleEditing) {
       setIsTodoTitleEditing(true);
       setSelectedTodoIds([todoId]);
     }
@@ -135,7 +132,6 @@ export const App: React.FC = () => {
       throw Error(ErrorMessage.OnUpdatingTodo);
     } finally {
       setIsDataInProceeding(false);
-      // setSelectedTodoIds([]);
     }
   };
 
@@ -202,8 +198,6 @@ export const App: React.FC = () => {
           selectedTodoIds={selectedTodoIds}
           tempTodo={tempTodo}
           isDataInProceeding={isDataInProceeding}
-          isSaveSuccessful={isSaveSuccessful}
-          setIsSaveSuccessful={setIsSaveSuccessful}
           onTodoTitleEdit={handleDoubleClickOnTodoField}
           changeEditingStatus={setIsTodoTitleEditing}
           onUpdate={handleChangeTodo}
