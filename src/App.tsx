@@ -59,6 +59,8 @@ export const App: React.FC = () => {
   // #endregion
 
   const handleFiltrationOption = (option: FilterOptions) => {
+    setIsTodoTitleEditing(false);
+    setIsSaveSuccessful(true);
     setSelectedOption(option);
   };
 
