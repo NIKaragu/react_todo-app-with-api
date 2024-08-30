@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import { USER_ID, deleteTodo, getTodos, updateTodo } from './api/todos';
 import { TodoHeader } from './components/TodoHeader';
@@ -36,7 +36,9 @@ export const App: React.FC = () => {
   const [isTodoTitleEditing, setIsTodoTitleEditing] = useState(false);
   // #endregion
 
-  const filteredTodos = filterTodos(todos, selectedOption);
+  const filteredTodos = useMemo(() => {
+    return filterTodos(todos, selectedOption);
+  }, [todos, selectedOption]);
 
   // #region creatingNewTodo
   const handleNewTodo = (newTodo: Todo) => {

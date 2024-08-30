@@ -59,7 +59,6 @@ export const TodoItem: React.FC<Props> = ({
       return;
     }
 
-    console.log('isTodoTitleEditing before request', isTodoTitleEditing);
     try {
       await onUpdate({
         id: todo.id,
@@ -73,8 +72,6 @@ export const TodoItem: React.FC<Props> = ({
       changeEditingStatus(true);
       focusOnTitleEditing.current?.focus();
     }
-
-    console.log('isTodoTitleEditing after request', isTodoTitleEditing);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -104,10 +101,9 @@ export const TodoItem: React.FC<Props> = ({
           className="todo__status"
           checked={todo.completed}
           onChange={() => {
-            if (!isTodoTitleEditing) {
-              toggleStatus(todo.id);
-            }
+            toggleStatus(todo.id);
           }}
+          disabled={isTodoTitleEditing}
         />
       </label>
 
@@ -141,10 +137,9 @@ export const TodoItem: React.FC<Props> = ({
             className="todo__remove"
             data-cy="TodoDelete"
             onClick={() => {
-              if (!isTodoTitleEditing) {
-                onDelete(todo.id);
-              }
+              onDelete(todo.id);
             }}
+            disabled={isTodoTitleEditing}
           >
             x
           </button>
